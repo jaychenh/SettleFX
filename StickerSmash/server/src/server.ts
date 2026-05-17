@@ -34,3 +34,28 @@ app.get("/rates", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+//this is the convergence of currency
+app.post("/convert", async (req, res) => {
+  try {
+    const API_KEY = process.env.EXCHANGE_API_KEY;
+
+    const { amount, from, to } = req.body;
+
+    const response = await fetch(
+      `https://v6.exchangerate-api.com/v6/${API_KEY}/pair/${from}/${to}/${amount}`
+    );
+
+    const data = await response.json();
+
+    res.json({
+      result: `${amount} ${from} = ${data.conversion_result} ${to}`,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to convert currency" });
+  }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
